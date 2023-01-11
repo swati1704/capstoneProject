@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: appserver
+  name: appserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appserver
+  template:
+    metadata:
+      labels:
+        app: appserver
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - critical
+      containers:
+      - image: swati1704/appserver:latest
+        name: appserver
+        ports:
+        - containerPort: 8081
+      tolerations:
+      - key: "app"
+        operator: "Equal"
+        effect: "NoSchedule"
+        value: "critical"
